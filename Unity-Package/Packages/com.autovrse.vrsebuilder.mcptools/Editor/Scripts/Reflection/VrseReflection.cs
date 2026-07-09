@@ -75,6 +75,23 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Reflection
             return field?.GetValue(instance);
         }
 
+        public static void SetMemberValue(object? instance, string memberName, object? value)
+        {
+            if (instance == null)
+                return;
+
+            Type type = instance.GetType();
+            PropertyInfo? property = type.GetProperty(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            if (property != null && property.CanWrite)
+            {
+                property.SetValue(instance, value);
+                return;
+            }
+
+            FieldInfo? field = type.GetField(memberName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            field?.SetValue(instance, value);
+        }
+
         public static string GetString(object? instance, string memberName)
         {
             return GetMemberValue(instance, memberName)?.ToString() ?? string.Empty;
@@ -110,6 +127,16 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Reflection
                 return enumerable.Cast<object>().Where(item => item != null).ToList();
 
             return new List<object>();
+        }
+
+        public static Array ToTypedArray(Type elementType, IEnumerable<object> values)
+        {
+            object[] items = values.ToArray();
+            Array array = Array.CreateInstance(elementType, items.Length);
+            for (int i = 0; i < items.Length; i++)
+                array.SetValue(items[i], i);
+
+            return array;
         }
 
         public static List<object> FindSceneObjectsOfType(Type type)
