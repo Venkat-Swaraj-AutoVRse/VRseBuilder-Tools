@@ -38,16 +38,10 @@ $ErrorActionPreference = "Stop"
 # Version file locations (relative to script root)
 $VersionFiles = @(
     @{
-        Path        = "Unity-Package/Packages/YOUR_PACKAGE_ID_LOWERCASE/package.json"
+        Path        = "Unity-Package/Packages/com.autovrse.vrsebuilder.mcptools/package.json"
         Pattern     = '"version":\s*"[\d\.]+"'
         Replace     = '"version": "{VERSION}"'
         Description = "Unity package version"
-    },
-    @{
-        Path        = "Installer/Assets/YOUR_PACKAGE_NAME_INSTALLER/Installer.cs"
-        Pattern     = 'public const string Version = "[\d\.]+";'
-        Replace     = 'public const string Version = "{VERSION}";'
-        Description = "Installer C# version constant"
     }
 )
 
@@ -70,7 +64,7 @@ function Test-SemanticVersion {
 
 function Get-CurrentVersion {
     # Extract current version from package.json
-    $packageJsonPath = "Unity-Package/Packages/YOUR_PACKAGE_ID_LOWERCASE/package.json"
+    $packageJsonPath = "Unity-Package/Packages/com.autovrse.vrsebuilder.mcptools/package.json"
     if (-not (Test-Path $packageJsonPath)) {
         throw "Could not find package.json at: $packageJsonPath"
     }
