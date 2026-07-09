@@ -54,6 +54,21 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Infrastructure
             return node;
         }
 
+        public static Type GetStoryType() => StoryType;
+
+        public static object CloneNode(object original)
+        {
+            object clone = Activator.CreateInstance(NodeType) ?? throw Missing("Node instance");
+            VrseReflection.SetMemberValue(clone, "Name", VrseReflection.GetString(original, "Name"));
+            VrseReflection.SetMemberValue(clone, "TargetGameObject", VrseReflection.GetMemberValue(original, "TargetGameObject"));
+            VrseReflection.SetMemberValue(clone, "ID", VrseReflection.GetInt(original, "ID"));
+            VrseReflection.SetMemberValue(clone, "Query", VrseReflection.GetString(original, "Query"));
+            VrseReflection.SetMemberValue(clone, "Option", VrseReflection.GetString(original, "Option"));
+            VrseReflection.SetMemberValue(clone, "Data", VrseReflection.GetString(original, "Data"));
+            VrseReflection.SetMemberValue(clone, "Type", (byte)VrseReflection.GetInt(original, "Type"));
+            return clone;
+        }
+
         public static object GetOrCreateActionSet(object moment, string section)
         {
             object? actionSet = VrseReflection.GetMemberValue(moment, section);
