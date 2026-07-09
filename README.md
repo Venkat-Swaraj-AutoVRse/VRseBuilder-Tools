@@ -24,10 +24,10 @@ Use the initialization script to rename the package and replace all placeholders
 
 This script will:
 - Rename directories and files.
-- Replace `YOUR_PACKAGE_ID`, `YOUR_PACKAGE_NAME`, etc. in all files and folder names.
+- Replace `com.autovrse.vrsebuilder.mcptools`, `VRseBuilder AITools`, etc. in all files and folder names.
 
 ### 4️⃣ Update `package.json`
-Open `Unity-Package/Packages/YOUR_PACKAGE_ID_LOWERCASE/package.json` and update:
+Open `Unity-Package/Packages/com.autovrse.vrsebuilder.mcptools/package.json` and update:
 - `description`
 - `author`
 - `keywords`
@@ -76,25 +76,25 @@ Decide what type of MCP tool you need:
 
 Based on your choice create script at the location
 
-- Editor: `Unity-Package/Packages/YOUR_PACKAGE_ID_LOWERCASE/Editor`
-- Runtime: `Unity-Package/Packages/YOUR_PACKAGE_ID_LOWERCASE/Runtime`
+- Editor: `Unity-Package/Packages/com.autovrse.vrsebuilder.mcptools/Editor`
+- Runtime: `Unity-Package/Packages/com.autovrse.vrsebuilder.mcptools/Runtime`
 
-> Read detailed instructions about custom tool development [here](https://github.com/IvanMurzak/Unity-MCP?tab=readme-ov-file#add-custom-mcp-tool).
+> Read detailed instructions about custom tool development [here](https://github.com/IvanMurzak/Unity-MCP?tab=readme-ov-file#add-custom-tool).
 
 ```csharp
-[McpPluginToolType]
-public static class MyCustomTool
+[AiToolType]
+public class MyCustomTool
 {
-    [McpPluginTool("my-custom-feature", Title = "Do my custom feature")]
+    [AiTool("my-custom-feature", Title = "Do my custom feature")]
     [Description("Put here the tool description for LLM.")]
-    public static Task<bool> DoTurn(
+    public bool DoTurn(
         [Description("Add description to the input property, help LLM better understand it.)]
         int figureId,
         [Description("Add description to the input property, help LLM better understand it.)]
         Vector2Int position)
     {
         // do any logic in background thread here
-        return MainThread.Instance.RunAsync(() =>
+        return MainThread.Instance.Run(() =>
         {
             // do any logic in main thread here
 
@@ -140,7 +140,7 @@ To enable automatic testing and deployment:
 4.  **Automatic Deployment**
     The release workflow triggers automatically when you push to the `main` branch with an incremented version in `package.json`.
 
-### 3. Add files into `Unity-Package/Packages/YOUR_PACKAGE_ID_LOWERCASE` folder
+### 3. Add files into `Unity-Package/Packages/com.autovrse.vrsebuilder.mcptools` folder
 
 [Unity guidelines](https://docs.unity3d.com/Manual/cus-layout.html) about organizing files into the package root directory
 
@@ -175,7 +175,7 @@ To enable automatic testing and deployment:
 # Final polishing
 
 - Update the `README.md` file (this file) with information about your package.
-- Copy the updated `README.md` to `Packages/YOUR_PACKAGE_ID_LOWERCASE` as well.
+- Copy the updated `README.md` to `Packages/com.autovrse.vrsebuilder.mcptools` as well.
 
 > ⚠️ Everything outside of the `root` folder won't be added to your package. But still could be used for testing or showcasing your package at your repository.
 
@@ -196,7 +196,7 @@ When your package is distributed, you can install it into any Unity project.
 - Execute the command (for `OpenUPM` hosted package)
 
   ```bash
-  openupm add YOUR_PACKAGE_NAME
+  openupm add VRseBuilder AITools
   ```
 
 # Final view in Unity Package Manager

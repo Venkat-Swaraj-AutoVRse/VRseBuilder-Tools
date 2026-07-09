@@ -39,7 +39,7 @@ Unity-AI-Tools-Template/
 
 - **Language:** C# 9.0, `netstandard2.1`
 - **Unity:** 2022.3+ (minimum). Tested against 2022.3.62f3, 2023.2.22f1, 6000.3.1f1.
-- **Dependency:** `com.ivanmurzak.unity.mcp` v0.68.0 (declared in `Unity-Package/Packages/YOUR_PACKAGE_ID_LOWERCASE/package.json`)
+- **Dependency:** `com.ivanmurzak.unity.mcp` v0.82.4 (declared in `Unity-Package/Packages/YOUR_PACKAGE_ID_LOWERCASE/package.json`)
 - **Assemblies (placeholders set by init.ps1):**
   - `YOUR_PACKAGE_ID.Editor`
   - `YOUR_PACKAGE_ID.Runtime`
@@ -65,22 +65,22 @@ When adding a new MCP tool:
 
 ## MCP tool pattern
 
-Tools are static classes attributed with `[McpPluginToolType]`, with one
-operation per method attributed with `[McpPluginTool(...)]`. Follow the
-Unity-MCP-Plugin convention of one operation per file via partial classes.
+Tools are classes attributed with `[AiToolType]`, with one operation per method
+attributed with `[AiTool(...)]`. Follow Ivan Unity-MCP's convention of one
+operation per file via partial classes.
 
 ```csharp
-[McpPluginToolType]
-public static class MyCustomTool
+[AiToolType]
+public class MyCustomTool
 {
-    [McpPluginTool("my-custom-feature", Title = "Do my custom feature")]
+    [AiTool("my-custom-feature", Title = "Do my custom feature")]
     [Description("Put here the tool description for LLM.")]
-    public static Task<bool> DoTurn(
+    public bool DoTurn(
         [Description("Help LLM understand this property.")] int figureId,
         [Description("Help LLM understand this property.")] Vector2Int position)
     {
         // background-thread work here
-        return MainThread.Instance.RunAsync(() =>
+        return MainThread.Instance.Run(() =>
         {
             // main-thread work here
             return true;
@@ -104,7 +104,7 @@ After init, open both `Installer/` and `Unity-Package/` in Unity Editor (via
 
 - `#nullable enable` at the top of every C# file.
 - Copyright box comment header in every C# file.
-- Follow MCP tool patterns from Unity-MCP-Plugin (partial classes, one op per file).
+- Follow Ivan Unity-MCP tool patterns (`AiToolType`, `AiTool`, partial classes, one op per file).
 - High cohesion, low coupling — many small files preferred.
 
 ## Release artifact

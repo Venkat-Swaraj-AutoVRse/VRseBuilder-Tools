@@ -1,0 +1,30 @@
+{
+    "name": "com.autovrse.vrsebuilder.mcptools",
+    "displayName": "VRseBuilder AITools",
+    "author": {
+        "name": "Venkat Swaraj Goli",
+        "url": "https://github.com/Your_Name"
+    },
+    "keywords": [
+        "vrsebuilder",
+        "mcp",
+        "ai-game-developer",
+        "unity"
+    ],
+    "version": "1.0.0",
+    "unity": "2022.3",
+    "description": "Ivan Unity-MCP extension tools for VRseBuilder project, module, story, scene, spatial, and build workflows.",
+    "dependencies": {
+        "com.ivanmurzak.unity.mcp": "0.82.4"
+    },
+    "scopedRegistries": [
+        {
+            "name": "package.openupm.com",
+            "url": "https://package.openupm.com",
+            "scopes": [
+                "extensions.unity",
+                "com.ivanmurzak"
+            ]
+        }
+    ]
+}
