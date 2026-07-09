@@ -90,9 +90,9 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Infrastructure
                 var module = new VrseConfigModuleInfo
                 {
                     Index = i,
-                    ModuleId = ReadRelativeString(moduleProperty, "ModuleId"),
+                    ModuleId = ReadRelativeString(moduleProperty, "ModuleId", "_moduleId"),
                     Name = ReadModuleName(moduleProperty, i),
-                    IncludeInBuild = ReadRelativeBool(moduleProperty, "IncludeInBuild"),
+                    IncludeInBuild = ReadRelativeBool(moduleProperty, "IncludeInBuild", "_includeInBuild"),
                     Experiences = ReadExperiences(moduleProperty)
                 };
                 modules.Add(module);
@@ -124,7 +124,7 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Infrastructure
 
         private static string ReadModuleName(SerializedProperty moduleProperty, int index)
         {
-            string explicitName = ReadRelativeString(moduleProperty, "Name");
+            string explicitName = ReadRelativeString(moduleProperty, "Name", "_name");
             if (!string.IsNullOrEmpty(explicitName))
                 return explicitName;
 
@@ -138,24 +138,24 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Infrastructure
         private static List<VrseConfigExperienceInfo> ReadExperiences(SerializedProperty moduleProperty)
         {
             var experiences = new List<VrseConfigExperienceInfo>();
-            SerializedProperty? list = moduleProperty.FindPropertyRelative("ExperienceDataList");
+            SerializedProperty? list = FindRelativeProperty(moduleProperty, "ExperienceDataList", "_experienceDataList");
             if (list == null || !list.isArray)
                 return experiences;
 
             for (int i = 0; i < list.arraySize; i++)
             {
                 SerializedProperty experienceProperty = list.GetArrayElementAtIndex(i);
-                string devScene = ReadRelativeString(experienceProperty, "DevScene");
-                string artScene = ReadRelativeString(experienceProperty, "ArtScene");
+                string devScene = ReadRelativeString(experienceProperty, "DevScene", "_devScene");
+                string artScene = ReadRelativeString(experienceProperty, "ArtScene", "_artScene");
                 experiences.Add(new VrseConfigExperienceInfo
                 {
                     Index = i,
-                    ExperienceId = ReadRelativeString(experienceProperty, "ExperienceId"),
-                    Name = ReadRelativeString(experienceProperty, "Name"),
-                    Type = ReadRelativeEnumOrString(experienceProperty, "Type"),
+                    ExperienceId = ReadRelativeString(experienceProperty, "ExperienceId", "_experienceId"),
+                    Name = ReadRelativeString(experienceProperty, "Name", "_name"),
+                    Type = ReadRelativeEnumOrString(experienceProperty, "Type", "_type"),
                     DevScene = devScene,
                     ArtScene = artScene,
-                    StoryJsonPath = ReadRelativeString(experienceProperty, "StoryJsonPath"),
+                    StoryJsonPath = ReadRelativeString(experienceProperty, "StoryJsonPath", "_storyJsonPath"),
                     HasDevScene = !string.IsNullOrEmpty(devScene) && File.Exists(devScene),
                     HasArtScene = !string.IsNullOrEmpty(artScene) && File.Exists(artScene)
                 });
@@ -164,27 +164,76 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Infrastructure
             return experiences;
         }
 
-        private static string ReadRelativeString(SerializedProperty parent, string propertyName)
+        public static VrseConfigModuleInfo? FindModule(string projectName, string? moduleId = null, string? moduleName = null)
         {
-            SerializedProperty? property = parent.FindPropertyRelative(propertyName);
+            foreach (VrseConfigModuleInfo module in ListConfigModules(projectName))
+            {
+                if (!string.IsNullOrWhiteSpace(moduleId) && string.Equals(module.ModuleId, moduleId.Trim(), StringComparison.OrdinalIgnoreCase))
+                    return module;
+
+                if (!string.IsNullOrWhiteSpace(moduleName) && string.Equals(module.Name, moduleName.Trim(), StringComparison.OrdinalIgnoreCase))
+                    return module;
+            }
+
+            return null;
+        }
+
+        public static VrseConfigExperienceInfo? FindExperience(VrseConfigModuleInfo module, string? experienceId = null, string? experienceName = null, string? experienceType = null)
+        {
+            foreach (VrseConfigExperienceInfo experience in module.Experiences)
+            {
+                if (!string.IsNullOrWhiteSpace(experienceId) && string.Equals(experience.ExperienceId, experienceId.Trim(), StringComparison.OrdinalIgnoreCase))
+                    return experience;
+
+                if (!string.IsNullOrWhiteSpace(experienceName) && string.Equals(experience.Name, experienceName.Trim(), StringComparison.OrdinalIgnoreCase))
+                    return experience;
+            }
+
+            if (!string.IsNullOrWhiteSpace(experienceType))
+            {
+                VrseConfigExperienceInfo? typeMatch = module.Experiences.FirstOrDefault(experience =>
+                    string.Equals(experience.Type, experienceType.Trim(), StringComparison.OrdinalIgnoreCase));
+                if (typeMatch != null)
+                    return typeMatch;
+            }
+
+            return module.Experiences.FirstOrDefault(experience => string.Equals(experience.Type, "Training", StringComparison.OrdinalIgnoreCase))
+                ?? module.Experiences.FirstOrDefault();
+        }
+
+        private static SerializedProperty? FindRelativeProperty(SerializedProperty parent, params string[] propertyNames)
+        {
+            foreach (string propertyName in propertyNames)
+            {
+                SerializedProperty? property = parent.FindPropertyRelative(propertyName);
+                if (property != null)
+                    return property;
+            }
+
+            return null;
+        }
+
+        private static string ReadRelativeString(SerializedProperty parent, params string[] propertyNames)
+        {
+            SerializedProperty? property = FindRelativeProperty(parent, propertyNames);
             return property?.propertyType == SerializedPropertyType.String ? property.stringValue : string.Empty;
         }
 
-        private static bool ReadRelativeBool(SerializedProperty parent, string propertyName)
+        private static bool ReadRelativeBool(SerializedProperty parent, params string[] propertyNames)
         {
-            SerializedProperty? property = parent.FindPropertyRelative(propertyName);
+            SerializedProperty? property = FindRelativeProperty(parent, propertyNames);
             return property?.propertyType == SerializedPropertyType.Boolean && property.boolValue;
         }
 
-        private static string ReadRelativeEnumOrString(SerializedProperty parent, string propertyName)
+        private static string ReadRelativeEnumOrString(SerializedProperty parent, params string[] propertyNames)
         {
-            SerializedProperty? property = parent.FindPropertyRelative(propertyName);
+            SerializedProperty? property = FindRelativeProperty(parent, propertyNames);
             if (property == null)
                 return string.Empty;
 
             return property.propertyType switch
             {
-                SerializedPropertyType.Enum => property.enumDisplayNames.Length > property.enumValueIndex ? property.enumDisplayNames[property.enumValueIndex] : property.enumValueIndex.ToString(),
+                SerializedPropertyType.Enum => property.enumValueIndex >= 0 && property.enumDisplayNames.Length > property.enumValueIndex ? property.enumDisplayNames[property.enumValueIndex] : property.enumValueIndex.ToString(),
                 SerializedPropertyType.String => property.stringValue,
                 _ => string.Empty
             };
