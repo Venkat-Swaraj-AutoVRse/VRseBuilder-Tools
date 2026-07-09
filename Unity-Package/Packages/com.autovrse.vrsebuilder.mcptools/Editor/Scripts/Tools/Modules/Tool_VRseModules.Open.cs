@@ -15,7 +15,8 @@ using com.autovrse.vrsebuilder.mcptools.Editor.Models;
 using com.IvanMurzak.McpPlugin;
 using com.IvanMurzak.ReflectorNet.Utils;
 using UnityEditor.SceneManagement;
-using UnityEngine.SceneManagement;
+using OpenSceneMode = UnityEditor.SceneManagement.OpenSceneMode;
+using UnityScene = UnityEngine.SceneManagement.Scene;
 
 namespace com.autovrse.vrsebuilder.mcptools.Editor.Tools.Modules
 {
@@ -50,7 +51,7 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Tools.Modules
                 if (!File.Exists(experience.DevScene))
                     throw new FileNotFoundException("Dev scene file does not exist.", experience.DevScene);
 
-                Scene devScene = EditorSceneManager.OpenScene(experience.DevScene, OpenSceneMode.Single);
+                UnityScene devScene = EditorSceneManager.OpenScene(experience.DevScene, OpenSceneMode.Single);
                 bool artSceneLoaded = false;
                 if (!string.IsNullOrEmpty(experience.ArtScene) && File.Exists(experience.ArtScene))
                 {
@@ -91,7 +92,7 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Tools.Modules
                 if (!File.Exists(experience.ArtScene))
                     throw new FileNotFoundException("Art scene file does not exist.", experience.ArtScene);
 
-                Scene artScene = EditorSceneManager.OpenScene(experience.ArtScene, OpenSceneMode.Additive);
+                UnityScene artScene = EditorSceneManager.OpenScene(experience.ArtScene, OpenSceneMode.Additive);
                 return BuildSceneResult(resolvedProjectName, module, experience, experience.ArtScene, artScene.name, artSceneLoaded: true);
             });
         }

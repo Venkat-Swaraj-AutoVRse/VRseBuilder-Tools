@@ -32,7 +32,7 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Tools.Scene
                 var result = new VrseQueryObjectsListResult { Success = true };
                 foreach (object query in queries)
                 {
-                    if (query is not Component component || component.gameObject == null)
+                    if (query is not UnityEngine.Component component || component.gameObject == null)
                         continue;
 
                     result.QueryObjects.Add(new VrseQueryObjectInfo
@@ -72,7 +72,7 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Tools.Scene
         private static List<string> GetVrseComponentLabels(GameObject gameObject)
         {
             var labels = new List<string>();
-            foreach (Component component in gameObject.GetComponents<Component>())
+            foreach (UnityEngine.Component component in gameObject.GetComponents<UnityEngine.Component>())
             {
                 if (component == null)
                     continue;

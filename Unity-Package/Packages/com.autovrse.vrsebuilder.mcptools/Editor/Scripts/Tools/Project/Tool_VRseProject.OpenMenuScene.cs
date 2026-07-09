@@ -15,7 +15,8 @@ using com.autovrse.vrsebuilder.mcptools.Editor.Models;
 using com.IvanMurzak.McpPlugin;
 using com.IvanMurzak.ReflectorNet.Utils;
 using UnityEditor.SceneManagement;
-using UnityEngine.SceneManagement;
+using OpenSceneMode = UnityEditor.SceneManagement.OpenSceneMode;
+using UnityScene = UnityEngine.SceneManagement.Scene;
 
 namespace com.autovrse.vrsebuilder.mcptools.Editor.Tools.Project
 {
@@ -42,7 +43,7 @@ namespace com.autovrse.vrsebuilder.mcptools.Editor.Tools.Project
                 if (!File.Exists(menuScene))
                     throw new FileNotFoundException("Main menu scene file does not exist.", menuScene);
 
-                Scene scene = EditorSceneManager.OpenScene(menuScene, OpenSceneMode.Single);
+                UnityScene scene = EditorSceneManager.OpenScene(menuScene, OpenSceneMode.Single);
                 return new VrseOpenSceneResult
                 {
                     Success = true,
